@@ -13,11 +13,13 @@ public class ScaleUIExtension : MonoBehaviour, IUIExtension
     public void Show()
     {
         gameObject.SetActive(true);
+        transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, showDuration).SetEase(showEase);
     }
 
     public void Hide()
     {
+        transform.localScale = Vector3.one;
         transform.DOScale(Vector3.zero, hideDuration).SetEase(hideEase).OnComplete(() =>
         {
             gameObject.SetActive(false);
