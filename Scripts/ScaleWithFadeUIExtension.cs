@@ -7,6 +7,7 @@ using DG.Tweening;
 public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
 {
     public Image fadeImage;
+    public CanvasGroup fadeGroup;
     public float showFadeDuration = 0.5f;
     public float showFadeAlpha = 0.5f;
     public float hideFadeDuration = 0.5f;
@@ -20,19 +21,48 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
     public void Show()
     {
         gameObject.SetActive(true);
-        scaleTransform.localScale = Vector3.zero;
-        scaleTransform.DOScale(Vector3.one, showScaleDuration).SetEase(showEase);
-        fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, hideFadeAlpha);
-        fadeImage.DOFade(showFadeAlpha, showFadeDuration);
+        if (scaleTransform != null)
+        {
+            scaleTransform.localScale = Vector3.zero;
+            scaleTransform.DOScale(Vector3.one, showScaleDuration).SetEase(showEase);
+        }
+        if (fadeImage != null)
+        {
+            fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, hideFadeAlpha);
+            fadeImage.DOFade(showFadeAlpha, showFadeDuration);
+        }
+        if (fadeGroup != null)
+        {
+            fadeGroup.alpha = hideFadeAlpha;
+            fadeGroup.DOFade(showFadeAlpha, showFadeDuration);
+        }
     }
 
     public void Hide()
     {
-        scaleTransform.localScale = Vector3.one;
-        scaleTransform.DOScale(Vector3.zero, hideScaleDuration).SetEase(hideEase).OnComplete(() =>
+        if (scaleTransform != null)
         {
-            gameObject.SetActive(false);
-        });
-        fadeImage.DOFade(hideFadeAlpha, hideFadeDuration);
+            scaleTransform.localScale = Vector3.one;
+            scaleTransform.DOScale(Vector3.zero, hideScaleDuration).SetEase(hideEase).OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+            });
+        }
+        if (fadeImage != null)
+        {
+            fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, showFadeAlpha);
+            fadeImage.DOFade(hideFadeAlpha, hideFadeDuration).OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+            });
+        }
+        if (fadeGroup != null)
+        {
+            fadeGroup.alpha = showFadeAlpha;
+            fadeGroup.DOFade(hideFadeAlpha, hideFadeDuration).OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+            });
+        }
     }
 }
