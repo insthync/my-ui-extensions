@@ -15,16 +15,18 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
     public Transform scaleTransform;
     public float showScaleDuration = 0.5f;
     public Ease showEase = Ease.OutBack;
+    public Vector3 showScale = Vector3.one;
     public float hideScaleDuration = 0.5f;
     public Ease hideEase = Ease.InBack;
+    public Vector3 hideScale = Vector3.zero;
 
     public void Show()
     {
         gameObject.SetActive(true);
         if (scaleTransform != null)
         {
-            scaleTransform.localScale = Vector3.zero;
-            scaleTransform.DOScale(Vector3.one, showScaleDuration).SetEase(showEase);
+            scaleTransform.localScale = hideScale;
+            scaleTransform.DOScale(showScale, showScaleDuration).SetEase(showEase);
         }
         if (fadeImage != null)
         {
@@ -42,8 +44,8 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
     {
         if (scaleTransform != null)
         {
-            scaleTransform.localScale = Vector3.one;
-            scaleTransform.DOScale(Vector3.zero, hideScaleDuration).SetEase(hideEase).OnComplete(() =>
+            scaleTransform.localScale = showScale;
+            scaleTransform.DOScale(hideScale, hideScaleDuration).SetEase(hideEase).OnComplete(() =>
             {
                 gameObject.SetActive(false);
             });
