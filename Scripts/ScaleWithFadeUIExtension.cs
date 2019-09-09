@@ -20,8 +20,12 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
     public Ease hideEase = Ease.InBack;
     public Vector3 hideScale = Vector3.zero;
 
+    private float showTime;
+    private float hideTime;
+
     public void Show()
     {
+        showTime = Time.time;
         gameObject.SetActive(true);
         if (scaleTransform != null)
         {
@@ -42,12 +46,14 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
 
     public void Hide()
     {
+        hideTime = Time.time;
         if (scaleTransform != null)
         {
             scaleTransform.localScale = showScale;
             scaleTransform.DOScale(hideScale, hideScaleDuration).SetEase(hideEase).OnComplete(() =>
             {
-                gameObject.SetActive(false);
+                if (hideTime >= showTime)
+                    gameObject.SetActive(false);
             });
         }
         if (fadeImage != null)
@@ -55,7 +61,8 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
             fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, showFadeAlpha);
             fadeImage.DOFade(hideFadeAlpha, hideFadeDuration).OnComplete(() =>
             {
-                gameObject.SetActive(false);
+                if (hideTime >= showTime)
+                    gameObject.SetActive(false);
             });
         }
         if (fadeGroup != null)
@@ -63,7 +70,8 @@ public class ScaleWithFadeUIExtension : MonoBehaviour, IUIExtension
             fadeGroup.alpha = showFadeAlpha;
             fadeGroup.DOFade(hideFadeAlpha, hideFadeDuration).OnComplete(() =>
             {
-                gameObject.SetActive(false);
+                if (hideTime >= showTime)
+                    gameObject.SetActive(false);
             });
         }
     }

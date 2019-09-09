@@ -12,8 +12,12 @@ public class TranslateUIExtension : MonoBehaviour, IUIExtension
     public float hideDuration = 0.5f;
     public Ease hideEase = Ease.InBack;
 
+    private float showTime;
+    private float hideTime;
+    
     public void Show()
     {
+        showTime = Time.time;
         gameObject.SetActive(true);
         (transform as RectTransform).anchoredPosition = hidePosition;
         (transform as RectTransform).DOAnchorPos(showPosition, showDuration).SetEase(showEase);
@@ -21,10 +25,12 @@ public class TranslateUIExtension : MonoBehaviour, IUIExtension
 
     public void Hide()
     {
+        hideTime = Time.time;
         (transform as RectTransform).anchoredPosition = showPosition;
         (transform as RectTransform).DOAnchorPos(hidePosition, hideDuration).SetEase(hideEase).OnComplete(() =>
         {
-            gameObject.SetActive(false);
+            if (hideTime >= showTime)
+                gameObject.SetActive(false);
         });
     }
 }

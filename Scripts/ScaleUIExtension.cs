@@ -10,8 +10,12 @@ public class ScaleUIExtension : MonoBehaviour, IUIExtension
     public float hideDuration = 0.5f;
     public Ease hideEase = Ease.InBack;
 
+    private float showTime;
+    private float hideTime;
+
     public void Show()
     {
+        showTime = Time.time;
         gameObject.SetActive(true);
         transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, showDuration).SetEase(showEase);
@@ -19,10 +23,12 @@ public class ScaleUIExtension : MonoBehaviour, IUIExtension
 
     public void Hide()
     {
+        hideTime = Time.time;
         transform.localScale = Vector3.one;
         transform.DOScale(Vector3.zero, hideDuration).SetEase(hideEase).OnComplete(() =>
         {
-            gameObject.SetActive(false);
+            if (hideTime >= showTime)
+                gameObject.SetActive(false);
         });
     }
 }
